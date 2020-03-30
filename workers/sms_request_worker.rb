@@ -1,4 +1,5 @@
-require 'net/http'
+require "net/http"
+require "json"
 require "sidekiq"
 require "rack/env"
 require "sinatra/activerecord"
@@ -12,24 +13,30 @@ class SmsRequestWorker
   include Sidekiq::Worker
   
   def perform(sms_request_id)
-    puts "::::::::::::::::::::::::::::::::::::::::::::::::::: Worker doing somthing \n"
+    puts "::::::::::::::::::::::::::::::::::::::::::::::::::: Worker doing something \n"
     sms_request=SmsRequest.find(sms_request_id)
 
-    if sms_request
-      # TODO: Add endpoint as parameter
-      uri = URI('https://sms-scrapper.rover.quenecesito.org/sms/'+sms_request.dui)
-    
-      # TODO: Add timeout as parameter
+    if sms_request 
+      uri = URI(ENV['SCRAPPER_ENDPOINT']+sms_request.dui)
+      timeout = ENV['SCRAPPER_REQUEST_TIMEOUT'].to_i 
+
       Net::HTTP.start(uri.host,uri.port,
                     :use_ssl => uri.scheme == 'https',
-                    :read_timeout => 10) do |http|
+                    :read_timeout => timeout) do |http|
         request = Net::HTTP::Get.new uri
         response = http.request request
       end
 
       if response.code == 200
-        # TODO: Process response or enqueue again in case of error
-        message = response.read_body
+        response = JSON.parse(response.read_body)
+
+        message = ""
+        # Re-escribiendo el mensaje
+      	if response["success"] == true
+          message = "Usted es beneficiario de los $300USD"
+        else
+          message = "Usted no es beneficiario. Llame al 2565-5555 si aplica al criterio de seleccion"
+        end
 
         resp=TwilioSms.send_sms(sms_request.phone, message)
 
@@ -38,7 +45,7 @@ class SmsRequestWorker
 
         p "The work is done: #{sms_request.inspect}"
       else
-        p "Request failed: #{sms_request.inspect}"
+        p "Request failed by HTTP error: "+response.code.to_s
       end
     end
   end
