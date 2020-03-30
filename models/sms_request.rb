@@ -1,9 +1,27 @@
+require 'sidekiq'
+require 'telephone_number'
+require_relative "../workers/sms_request_worker"
+
+Sidekiq.configure_client do |config|
+  config.redis = { url: "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}" }
+end
+
+# $redis = Redis.new( url: "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}" )
+
 class SmsRequest < ActiveRecord::Base
   self.table_name = "sms_requests"
   validates :phone, :dui, presence: true
+
+  after_create :send_request_to_sidekiq
+
+  def send_request_to_sidekiq
+    # sleep 10
+    SmsRequestWorker.perform_in(2.seconds, self.id)
+  end
   
   def self.save_sms_request(param_phone, param_dui)
-    request_phone = param_phone.strip
+
+    request_phone = TelephoneNumber.parse(param_phone.strip, :sv).e164_number
     request_dui = param_dui.gsub('-','').gsub('_','').strip
       
       # Chekamos si ya hubo una solicitud pendiente
