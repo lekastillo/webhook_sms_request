@@ -15,7 +15,7 @@ class SmsRequestWorker
     sms_request=SmsRequest.find(sms_request_id)
 
     # GET MESSAGE
-    message = "Tienes los $300 o no"
+    message = "Buxos ya llegan los sms, solo falta integrar con scraping XD"
 
     if sms_request
       resp=TwilioSms.send_sms(sms_request.phone, message)

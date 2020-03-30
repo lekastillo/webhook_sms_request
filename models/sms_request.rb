@@ -21,7 +21,8 @@ class SmsRequest < ActiveRecord::Base
   
   def self.save_sms_request(param_phone, param_dui)
 
-    request_phone = TelephoneNumber.parse(param_phone.strip, :sv).e164_number
+    # request_phone = TelephoneNumber.parse(param_phone.strip, :sv).e164_number
+    request_phone = param_phone
     request_dui = param_dui.gsub('-','').gsub('_','').strip
       
       # Chekamos si ya hubo una solicitud pendiente
