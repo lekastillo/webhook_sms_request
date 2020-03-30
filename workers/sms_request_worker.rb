@@ -19,9 +19,10 @@ class SmsRequestWorker
       # TODO: Add endpoint as parameter
       uri = URI('https://sms-scrapper.rover.quenecesito.org/sms/'+sms_request.dui)
     
-      # TODO: Add timeout or cancel
+      # TODO: Add timeout as parameter
       Net::HTTP.start(uri.host,uri.port,
-                    :use_ssl => uri.scheme == 'https') do |http|
+                    :use_ssl => uri.scheme == 'https',
+                    :read_timeout => 10) do |http|
         request = Net::HTTP::Get.new uri
         response = http.request request
       end
