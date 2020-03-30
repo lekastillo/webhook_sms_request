@@ -11,28 +11,17 @@ set :environment, :production
 class App < Sinatra::Base
 
   get '/' do
-    if params["dui"].blank? or params["phone"].blank?
-      resp= 'Missing params'
-      status = 400
+
+    puts params.inspect
+
+    if params["AccountSid"].present? and params["MessageSid"].present? and params["Body"].present? and params["From"].present?
+      resp=SmsRequest.save_sms_request(params["From"], params["Body"])
+    elsif params["dui"].present? and params["phone"].present?
+      
+      resp=SmsRequest.save_sms_request(params["dui"], params["dui"])
     else
       
-      phone = params["phone"].strip
-      dui = params["dui"].strip
-      
-      # Chekamos si ya hubo una solicitud pendiente
-      sms_requests=SmsRequest.where(dui: dui, status: 0)
-      
-      if sms_requests.size == 0
-        puts "::::::::::::::::::::::::::::::::::::::::::::::::::: Request no encontrado \n"
-        new_request=SmsRequest.create(dui: dui, phone: phone)
-        resp = "request creada"
-        status = 200
-        
-      else
-        puts "::::::::::::::::::::::::::::::::::::::::::::::::::: Hay una request activa \n"
-        resp = "Hay una solicitud activa"
-        status = 200
-      end
+      resp = { message: 'Invalid Params', status: 400}
     end
     
     content_type :json
