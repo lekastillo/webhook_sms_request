@@ -17,16 +17,17 @@ class SmsRequestWorker
     sms_request = SmsRequest.find(sms_request_id)
 
     if sms_request
-      uri = URI("#{ENV['SCRAPPER_SERVICE']}/#{sms_request.dui}")
+      uri = URI("#{ENV['SCRAPPER_ENDPOINT']}/#{sms_request.dui}")
     
-      # TODO: Add timeout as parameter
-      Net::HTTP.start(uri.host,uri.port,
-                    :use_ssl => uri.scheme == 'https',
-                    :read_timeout => 10,
-                    :open_timeout => 10) do |http|
-        request = Net::HTTP::Get.new uri
-        response = http.request request
-      end
+      begin 
+        # TODO: Add timeout as parameter
+        Net::HTTP.start(uri.host,uri.port,
+                      :use_ssl => uri.scheme == 'https',
+                      :read_timeout => 10,
+                      :open_timeout => 10) do |http|
+          request = Net::HTTP::Get.new uri
+          response = http.request request
+        end
 
         if response.code == 200
           # TODO: Process response or enqueue again in case of error
@@ -46,5 +47,6 @@ class SmsRequestWorker
       rescue Net::OpenTimeout => exception
         STDERR.puts "OpenTimeout error"
       end
+    end
   end
 end
