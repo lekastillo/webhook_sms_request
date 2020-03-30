@@ -13,14 +13,25 @@ class SmsRequestWorker
   
   def perform(sms_request_id)
     puts "::::::::::::::::::::::::::::::::::::::::::::::::::: Worker doing somthing \n"
-    sms_request=SmsRequest.find(sms_request_id)
-    # TODO: Add endpoint as parameter
-    uri = URI('https://sms-scrapper.rover.quenecesito.org/sms/'+sms_request.dui)
-    # TODO: Add timeout or cancel
-    Net::HTTP.start(uri.host,uri.port,
-                    :use_ssl => uri.scheme == 'https') do |http|
-      request = Net::HTTP::Get.new uri
-      response = http.request request
+    sms_request = SmsRequest.find(sms_request_id)
+
+    uri = URI("#{ENV['SCRAPPER_SERVICE']}/#{sms_request.dui}")
+  
+    begin 
+      Net::HTTP.start(
+        uri.host,
+        uri.port,
+        :use_ssl => uri.scheme == 'https',
+        :read_timeout => 30,
+        :open_timeout => 30
+      ) do |http|
+        request = Net::HTTP::Get.new uri
+        response = http.request request
+      end
+    rescue Net::ReadTimeout => exception
+      STDERR.puts "#{host}:#{port} ReadTimeout error"
+    rescue Net::OpenTimeout => exception
+      STDERR.puts "#{host}:#{port} OpenTimeout error"
     end
 
     # TODO: Process response or enqueue again in case of error
