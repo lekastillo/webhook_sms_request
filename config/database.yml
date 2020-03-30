@@ -1,0 +1,15 @@
+development:
+  host: localhost
+  adapter: postgresql
+  encoding: unicode
+  pool: 2
+  database: sms_queue
+  username: postgres
+  password: developer
+production:
+  host: localhost
+  encoding: unicode
+  pool: 5
+  database: sms_queue
+  username: postgres
+  password: developer
