@@ -33,5 +33,8 @@ EXPOSE 9292
 EXPOSE 5432
 # Start puma
 # ENTRYPOINT [ "rackup" ]
-ENTRYPOINT bundle exec rackup -p 9292 --host 0.0.0.0
+# ENTRYPOINT bundle exec rackup -p 9292 --host 0.0.0.0
+# CMD bundle exec sidekiq -r ./workers/sms_request_worker.rb -C ./config/sidekiq.yml
+
 CMD bundle exec sidekiq -r ./workers/sms_request_worker.rb -C ./config/sidekiq.yml
+ENTRYPOINT bundle exec rackup -p 9292 --host 0.0.0.0
