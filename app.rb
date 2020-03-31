@@ -8,6 +8,8 @@ require_relative './models/sms_request'
 # set :environment, ENV['APP_ENV']
 use Rack::Env, envfile: '/home/lekastillo/projects/developer.sv/sinatra_webhook/.env' unless ENV['RACK_ENV'] == 'production'
 
+puts "======================> database URL: #{ENV['DATABASE_URL']}"
+
 class App < Sinatra::Base
 
   get '/' do
