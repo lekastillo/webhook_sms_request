@@ -10,6 +10,10 @@ RUN apt-get update -qq && \
 # Configure the main working directory. This is the base
 # directory used in any further RUN, COPY, and ENTRYPOINT
 # commands.
+# Build Args
+ARG DATABASE_URL=""
+ARG RACK_ENV="development"
+ARG APP_ENV="development"
 RUN mkdir -p /app
 WORKDIR /app
 
