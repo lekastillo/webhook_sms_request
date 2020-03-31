@@ -26,6 +26,7 @@ RUN bundle install --jobs 8 --retry 5
 ADD . /app
 
 EXPOSE 9292
+EXPOSE 5432
 # Start puma
 # ENTRYPOINT [ "rackup" ]
 ENTRYPOINT bundle exec rackup -p 9292 --host 0.0.0.0
