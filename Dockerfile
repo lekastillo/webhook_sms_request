@@ -14,6 +14,10 @@ RUN apt-get update -qq && \
 ARG DATABASE_URL=""
 ARG RACK_ENV="development"
 ARG APP_ENV="development"
+ARG TWILIO_PHONE_NUMBER=""
+ARG TWILIO_ACCOUNT_SID=""
+ARG TWILIO_ACCOUNT_TOKEN=""
+
 RUN mkdir -p /app
 WORKDIR /app
 
