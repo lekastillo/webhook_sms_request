@@ -11,6 +11,7 @@ Sidekiq.configure_server do |config|
 end
 class SmsRequestWorker
   include Sidekiq::Worker
+  sidekiq_options :retry => ENV['RETRY_COUNT'].to_i
   
   def perform(sms_request_id)
     puts "::::::::::::::::::::::::::::::::::::::::::::::::::: Worker doing something \n"
