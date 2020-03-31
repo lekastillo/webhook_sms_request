@@ -5,7 +5,7 @@ require_relative "../models/sms_request"
 require_relative "../services/twilio_sms"
 
 Sidekiq.configure_server do |config|
-  config.redis = { url: "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}" }
+  config.redis = { url: "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}", password: ENV["REDIS_PASSWORD"] }
 end
 class SmsRequestWorker
   include Sidekiq::Worker
