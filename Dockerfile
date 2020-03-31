@@ -10,16 +10,6 @@ RUN apt-get update -qq && \
 # Configure the main working directory. This is the base
 # directory used in any further RUN, COPY, and ENTRYPOINT
 # commands.
-# Build Args
-# ARG DATABASE_URL=""
-# ARG RACK_ENV="development"
-# ARG APP_ENV="development"
-# ARG TWILIO_PHONE_NUMBER=""
-# ARG TWILIO_ACCOUNT_SID=""
-# ARG TWILIO_ACCOUNT_TOKEN=""
-# ARG REDIS_HOST=""
-# ARG REDIS_PORT=""
-# ARG REDIS_PASSWORD=""
 
 RUN mkdir -p /app
 WORKDIR /app
