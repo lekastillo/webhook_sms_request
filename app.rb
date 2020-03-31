@@ -5,9 +5,9 @@ require 'pg'
 require 'json'
 require_relative './models/sms_request'
 
+# set :environment, ENV['APP_ENV']
+use Rack::Env, envfile: '/home/lekastillo/projects/developer.sv/sinatra_webhook/.env' unless ENV['RACK_ENV'] == 'production'
 
-use Rack::Env, envfile: '/home/lekastillo/projects/developer.sv/sinatra_webhook/.env'
-set :environment, :production
 class App < Sinatra::Base
 
   get '/' do
