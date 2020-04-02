@@ -4,6 +4,8 @@ require 'pg'
 require 'json'
 require_relative './models/sms_request'
 
+ENV['RACK_ENV'] == 'production' ? use Rack::Env : use Rack::Env, envfile: "#{File.expand_path(File.dirname(File.dirname(__FILE__)))}/.env"
+
 class App < Sinatra::Base
   get '/' do
     puts ENV["SCRAPPER_SERVICE"]

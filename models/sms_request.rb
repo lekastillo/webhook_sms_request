@@ -2,6 +2,11 @@ require 'sidekiq'
 require 'telephone_number'
 require_relative "../workers/sms_request_worker"
 
+
+Sidekiq.configure_client do |config|
+  config.redis = { url: "redis://#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}", password: "#{ENV['REDIS_PASSWORD']}" }
+end
+
 class SmsRequest < ActiveRecord::Base
   self.table_name = "sms_requests"
   validates :phone, :dui, presence: true

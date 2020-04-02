@@ -6,8 +6,6 @@ require "sinatra/activerecord"
 require_relative "../models/sms_request"
 require_relative "../services/twilio_sms"
 
-
-
 class SmsRequestWorker
   include Sidekiq::Worker
     
