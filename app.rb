@@ -6,7 +6,6 @@ require_relative './models/sms_request'
 
 class App < Sinatra::Base
   get '/' do
-    puts ENV["SCRAPPER_SERVICE"]
     if params["AccountSid"].present? and params["MessageSid"].present? and params["Body"].present? and params["From"].present?
       resp=SmsRequest.save_sms_request(params["From"], params["Body"])
     elsif params["dui"].present? and params["phone"].present?
@@ -16,7 +15,7 @@ class App < Sinatra::Base
     end
     
     content_type :json
-    halt status, { message: resp, }.to_json
+    halt status, resp.to_json
   end
 
 end

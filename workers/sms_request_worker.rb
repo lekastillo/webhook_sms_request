@@ -6,15 +6,13 @@ require "sinatra/activerecord"
 require_relative "../models/sms_request"
 require_relative "../services/twilio_sms"
 
-
-
 class SmsRequestWorker
   include Sidekiq::Worker
     
   def perform(sms_request_id)
 
     sms_request=SmsRequest.find(sms_request_id)
-    puts ENV['SCRAPPER_SERVICE']
+
     if sms_request 
       uri = URI("#{ENV['SCRAPPER_SERVICE']}/#{sms_request.dui}")
       read_timeout = ENV['SCRAPPER_READ_TIMEOUT'].to_i 
@@ -41,13 +39,11 @@ class SmsRequestWorker
           end
           
           resp=TwilioSms.send_sms(sms_request.phone, message)
-
           sms_request.update_column(:status, 1)
-          
-          STDERR.puts "The work is done: #{sms_request.inspect}"
+
         else
-          STDERR.puts "Request failed with HTTP error code "+response.code.to_s
           resp = "Request failed with HTTP error code "+response.code.to_s
+          STDERR.puts resp
         end
 
       rescue Net::ReadTimeout => exception
