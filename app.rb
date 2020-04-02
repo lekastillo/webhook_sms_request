@@ -6,9 +6,8 @@ require 'json'
 require_relative './models/sms_request'
 
 # set :environment, ENV['APP_ENV']
-use Rack::Env, envfile: '/home/lekastillo/projects/developer.sv/sinatra_webhook/.env' unless ENV['RACK_ENV'] == 'production'
-
-puts "======================> database URL: #{ENV['DATABASE_URL']}"
+# use Rack::Env, envfile: '/home/lekastillo/projects/developer.sv/sinatra_webhook/.env' unless ENV['RACK_ENV'] == 'production'
+ENV['RACK_ENV'] == 'production' ? use Rack::Env : use Rack::Env, envfile: "#{File.expand_path(File.dirname(File.dirname(__FILE__)))}/.env"
 
 class App < Sinatra::Base
 
