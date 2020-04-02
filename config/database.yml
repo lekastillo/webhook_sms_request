@@ -7,9 +7,4 @@ development:
   username: postgres
   password: developer
 production:
-  host: localhost
-  encoding: unicode
-  pool: 5
-  database: sms_queue
-  username: postgres
-  password: developer
+  url: <%= ENV['DATABASE_URL'] %>

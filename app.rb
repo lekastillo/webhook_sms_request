@@ -1,23 +1,15 @@
 require 'sinatra'
 require 'sinatra/activerecord'
-require 'rack/env'
 require 'pg'
 require 'json'
 require_relative './models/sms_request'
 
-
-use Rack::Env, envfile: '/home/lekastillo/projects/developer.sv/sinatra_webhook/.env'
-set :environment, :production
 class App < Sinatra::Base
-
   get '/' do
-
-    puts params.inspect
-
+    puts ENV["SCRAPPER_SERVICE"]
     if params["AccountSid"].present? and params["MessageSid"].present? and params["Body"].present? and params["From"].present?
       resp=SmsRequest.save_sms_request(params["From"], params["Body"])
     elsif params["dui"].present? and params["phone"].present?
-      puts "#{params["phone"]} \n"
       resp=SmsRequest.save_sms_request(params["phone"], params["dui"])
     else
       resp = { message: 'Invalid Params', status: 400}
