@@ -1,6 +1,10 @@
 # config.ru
 require 'rack/env'
 require_relative './config/environment'
+require "sidekiq"
+require 'sidekiq/web'
+require "active_support/security_utils"
+require "./app"
 
 if ENV['RACK_ENV']=='production'
   use Rack::Env
@@ -13,5 +17,14 @@ end
 Sidekiq.configure_client do |config|
   config.redis = redis_hash
 end
-require "./app"
-run App
+
+use Rack::Env
+Sidekiq::Web.use Rack::Auth::Basic, "Admin" do |username, password|
+    ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_USERNAME'])) &
+        ActiveSupport::SecurityUtils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_PASSWORD']))
+end
+
+run Rack::URLMap.new(
+    "/sidekiq" => Sidekiq::Web,
+    "/" => App
+) 
