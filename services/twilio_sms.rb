@@ -5,19 +5,17 @@ require 'twilio-ruby'
 class TwilioSms
 
   def self.send_sms(phone, message)
-    # begin
-      puts "::::::::::::::::::::::::::::::::::::::::::::::::::: Twilio \n"
-      client = Twilio::REST::Client.new('ACCOUNT SID', 'AUTH TOKEN')
+    begin
+      client = Twilio::REST::Client.new(ENV['ACCOUNT SID'], ENV['AUTH TOKEN'])
       result=client.messages.create(
-        from: 'NUMBER',
+        from: ENV['NUMBER'],
         to: phone,
         body: message
         )
-      puts "::::::::::::::::::::::::::::::::::::::::::::::::::: #{result.inspect} \n"
       return result.try(:sid)
-    # rescue
-    #   return false
-    # end
+    rescue
+      return result
+    end
   end
 end
 
